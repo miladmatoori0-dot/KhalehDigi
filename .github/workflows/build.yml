@@ -1,0 +1,46 @@
+name: Build APK
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - name: Setup directories
+        run: |
+          mkdir -p oilquiz/src/main/java/com/ahvaz/oilquiz
+          mkdir -p oilquiz/src/main/res/layout
+          mkdir -p oilquiz/src/main/res/values
+          mkdir -p oilquiz/src/main/res/drawable
+          mkdir -p oilquiz/src/main/assets
+      - name: Copy files
+        run: |
+          cp index.html oilquiz/src/main/assets/index.html
+          cp AndroidManifest.xml oilquiz/src/main/AndroidManifest.xml
+          cp MainActivity.java oilquiz/src/main/java/com/ahvaz/oilquiz/MainActivity.java
+          cp activity_main.xml oilquiz/src/main/res/layout/activity_main.xml
+          cp strings.xml oilquiz/src/main/res/values/strings.xml
+          cp themes.xml oilquiz/src/main/res/values/themes.xml
+          cp ic_oil.xml oilquiz/src/main/res/drawable/ic_oil.xml
+          cp module_build.gradle oilquiz/build.gradle
+          find oilquiz -type f
+      - name: Create local.properties
+        run: echo "sdk.dir=$ANDROID_HOME" > local.properties
+      - name: Build APK
+        run: |
+          gradle wrapper --gradle-version 8.4
+          chmod +x ./gradlew
+          ./gradlew :oilquiz:assembleDebug --no-daemon
+      - uses: actions/upload-artifact@v4
+        with:
+          name: KhalehDigi-APK
+          path: oilquiz/build/outputs/apk/debug/*.apk
+          if-no-files-found: warn
