@@ -1,0 +1,7 @@
+<resources>
+    <style name="Theme.OilQuiz" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:statusBarColor">#2a0a3a</item>
+        <item name="android:navigationBarColor">#2a0a3a</item>
+        <item name="android:windowBackground">#2a0a3a</item>
+    </style>
+</resources>
